@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeanBox Café - Smart Ordering System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #7B2CBF 0%, #9D4EDD 50%, #C77DFF 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 600px;
+      background: white;
+      padding: 60px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .logo {
+      font-size: 100px;
+      margin-bottom: 20px;
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    h1 {
+      color: #7B2CBF;
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+    
+    .tagline {
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 50px;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      padding: 18px 40px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .btn-customer {
+      background: #7B2CBF;
+      color: white;
+    }
+    
+    .btn-customer:hover {
+      background: #5A189A;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(123, 44, 191, 0.4);
+    }
+    
+    .btn-admin {
+      background: #9D4EDD;
+      color: white;
+    }
+    
+    .btn-admin:hover {
+      background: #C77DFF;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(157, 78, 221, 0.4);
+    }
+    
+    .features {
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      text-align: left;
+    }
+    
+    .feature {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 10px;
+      border-left: 3px solid #7B2CBF;
+    }
+    
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    
+    .feature-title {
+      font-weight: 600;
+      color: #7B2CBF;
+      margin-bottom: 5px;
+    }
+    
+    .feature-text {
+      font-size: 14px;
+      color: #666;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 40px 30px;
+      }
+      
+      h1 {
+        font-size: 32px;
+      }
+      
+      .logo {
+        font-size: 80px;
+      }
+      
+      .buttons {
+        flex-direction: column;
+      }
+      
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">☕</div>
+    <h1>BeanBox Café</h1>
+    <p class="tagline">Scan. Verify. Order. Sip.</p>
+    
+    <div class="buttons">
+      <a href="/customer" class="btn btn-customer">
+        📱 Customer App
+      </a>
+      <a href="/admin" class="btn btn-admin">
+        🧠 Admin Dashboard
+      </a>
+    </div>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Easy Ordering</div>
+        <div class="feature-text">Simple registration process</div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">💳</div>
+        <div class="feature-title">Secure Payments</div>
+        <div class="feature-text">Razorpay integration</div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Cash Orders</div>
+        <div class="feature-text">Walk-in customer support</div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Analytics</div>
+        <div class="feature-text">Sales tracking & reports</div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">📧</div>
+        <div class="feature-title">Email Updates</div>
+        <div class="feature-text">Automated notifications</div>
+      </div>
+      
+      <div class="feature">
+        <div class="feature-icon">☁️</div>
+        <div class="feature-title">Cloud Storage</div>
+        <div class="feature-text">AWS DynamoDB backend</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

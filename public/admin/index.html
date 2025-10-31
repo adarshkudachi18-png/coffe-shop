@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - BeanBox Café</title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="admin-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>BeanBox Admin</h2>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="#analytics" class="nav-item" data-page="analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analysis</span>
+        </a>
+        <a href="#menu" class="nav-item" data-page="menu">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Menu</span>
+        </a>
+        <a href="#orders" class="nav-item" data-page="orders">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-text">Live Orders</span>
+        </a>
+        <a href="#accepted" class="nav-item" data-page="accepted">
+          <span class="nav-icon">✅</span>
+          <span class="nav-text">Accepted</span>
+        </a>
+        <a href="#completed" class="nav-item" data-page="completed">
+          <span class="nav-icon">🟢</span>
+          <span class="nav-text">Completed</span>
+        </a>
+        <a href="#history" class="nav-item" data-page="history">
+          <span class="nav-icon">📜</span>
+          <span class="nav-text">History</span>
+        </a>
+        <a href="#walkin" class="nav-item" data-page="walkin">
+          <span class="nav-icon">🚶</span>
+          <span class="nav-text">Walk-in Order</span>
+        </a>
+      </nav>
+    </aside>
+    
+    <main class="main-content">
+      <header class="top-header">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1 id="pageTitle">Dashboard</h1>
+        <div class="header-actions">
+          <span class="current-time" id="currentTime"></span>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- Dashboard Page -->
+        <div id="page-dashboard" class="page-content active">
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon">📦</div>
+              <div class="kpi-content">
+                <div class="kpi-label">Total Orders Today</div>
+                <div class="kpi-value" id="kpi-total-orders">0</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-icon">💰</div>
+              <div class="kpi-content">
+                <div class="kpi-label">Total Revenue</div>
+                <div class="kpi-value">₹<span id="kpi-total-revenue">0</span></div>
+              </div>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-icon">✅</div>
+              <div class="kpi-content">
+                <div class="kpi-label">Accepted Orders</div>
+                <div class="kpi-value" id="kpi-accepted">0</div>
+              </div>
+            </div>
+            
+            <div class="kpi-card">
+              <div class="kpi-icon">🟢</div>
+              <div class="kpi-content">
+                <div class="kpi-label">Completed Orders</div>
+                <div class="kpi-value" id="kpi-completed">0</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <h3>Recent Activity</h3>
+            <div id="recentOrders" class="recent-orders"></div>
+          </div>
+        </div>
+        
+        <!-- Analytics Page -->
+        <div id="page-analytics" class="page-content">
+          <div class="analytics-header">
+            <h2>Sales Analytics</h2>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-period="today">Today</button>
+              <button class="filter-btn" data-period="week">This Week</button>
+              <button class="filter-btn" data-period="month">This Month</button>
+            </div>
+          </div>
+          
+          <div class="analytics-grid">
+            <div class="analytics-card">
+              <h3>Payment Breakdown</h3>
+              <div class="payment-breakdown">
+                <div class="payment-item">
+                  <span>Online Payments</span>
+                  <span class="payment-value">₹<span id="analytics-online">0</span></span>
+                </div>
+                <div class="payment-item">
+                  <span>Cash Payments</span>
+                  <span class="payment-value">₹<span id="analytics-cash">0</span></span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="analytics-card">
+              <h3>Top Selling Items</h3>
+              <div id="topItems" class="top-items"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Menu Page -->
+        <div id="page-menu" class="page-content">
+          <div class="page-header">
+            <h2>Menu Management</h2>
+            <button class="btn btn-primary" id="addMenuItemBtn">+ Add Item</button>
+          </div>
+          
+          <div id="menuList" class="menu-list"></div>
+        </div>
+        
+        <!-- Orders Page -->
+        <div id="page-orders" class="page-content">
+          <h2>Live Orders (Pending)</h2>
+          <div id="liveOrdersList" class="orders-list"></div>
+        </div>
+        
+        <!-- Accepted Page -->
+        <div id="page-accepted" class="page-content">
+          <h2>Accepted Orders</h2>
+          <div id="acceptedOrdersList" class="orders-list"></div>
+        </div>
+        
+        <!-- Completed Page -->
+        <div id="page-completed" class="page-content">
+          <h2>Completed Orders (Today)</h2>
+          <div id="completedOrdersList" class="orders-list"></div>
+        </div>
+        
+        <!-- History Page -->
+        <div id="page-history" class="page-content">
+          <h2>Order History</h2>
+          <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by Order ID, Name, or Phone..." class="search-input">
+          </div>
+          <div id="historyList" class="orders-list"></div>
+        </div>
+        
+        <!-- Walk-in Order Page -->
+        <div id="page-walkin" class="page-content">
+          <h2>Add Walk-in Order (Cash)</h2>
+          
+          <div class="walkin-form">
+            <div class="form-group">
+              <label>Customer Name (Optional)</label>
+              <input type="text" id="walkinName" class="form-input" placeholder="Enter customer name">
+            </div>
+            
+            <h3>Select Items</h3>
+            <div id="walkinMenu" class="walkin-menu"></div>
+            
+            <div class="walkin-cart">
+              <h3>Selected Items</h3>
+              <div id="walkinCart" class="walkin-cart-items"></div>
+              
+              <div class="cart-total">
+                <span>Total:</span>
+                <span>₹<span id="walkinTotal">0</span></span>
+              </div>
+              
+              <button class="btn btn-primary btn-block" id="placeWalkinOrderBtn">
+                Place Cash Order
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <!-- Menu Item Modal -->
+  <div id="menuModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Menu Item</h3>
+        <button class="modal-close" onclick="closeMenuModal()">×</button>
+      </div>
+      <form id="menuForm">
+        <input type="hidden" id="menuItemId">
+        
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="menuItemName" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Category</label>
+          <select id="menuItemCategory" class="form-input" required>
+            <option value="Coffee">Coffee</option>
+            <option value="Snacks">Snacks</option>
+            <option value="Desserts">Desserts</option>
+            <option value="Drinks">Drinks</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Price (₹)</label>
+          <input type="number" id="menuItemPrice" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Image URL</label>
+          <input type="url" id="menuItemImage" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="menuItemVeg"> Vegetarian
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="menuItemAvailable" checked> Available
+          </label>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeMenuModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script src="../js/utils.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

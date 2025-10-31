@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeanBox Café - Order Your Perfect Cup</title>
+  <link rel="stylesheet" href="../css/customer.css">
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="logo-animated">☕</div>
+      <h1 class="hero-title">BeanBox Café</h1>
+      <p class="hero-tagline">Crafted Coffee. Delivered Fresh.</p>
+      <button class="btn-cta" onclick="scrollToOrder()">Order Now</button>
+    </div>
+    <div class="scroll-indicator">
+      <span>↓</span>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <h2 class="section-title">Welcome to BeanBox</h2>
+      <p class="section-subtitle">Where Every Cup Tells a Story</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🌱</div>
+          <h3>Fresh Beans</h3>
+          <p>Sourced from the finest coffee estates, roasted to perfection daily.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Quick Service</h3>
+          <p>Place your order online and skip the queue. Your coffee, ready when you are.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">💳</div>
+          <h3>Easy Payments</h3>
+          <p>Secure online payments with instant confirmations via email.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">😊</div>
+          <h3>Made with Love</h3>
+          <p>Each cup is crafted by our experienced baristas with passion and care.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order Section -->
+  <section class="order-section" id="order">
+    <div class="container">
+      <div class="order-card">
+        <h2 class="order-title">Start Your Order</h2>
+        <p class="order-subtitle">Enter your details to begin</p>
+        
+        <form id="customerForm" class="customer-form">
+          <div class="form-group">
+            <label for="customerName">
+              <span class="label-icon">👤</span>
+              Your Name
+            </label>
+            <input 
+              type="text" 
+              id="customerName" 
+              class="form-input" 
+              placeholder="Enter your name" 
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="customerEmail">
+              <span class="label-icon">📧</span>
+              Email Address
+            </label>
+            <input 
+              type="email" 
+              id="customerEmail" 
+              class="form-input" 
+              placeholder="your.email@example.com" 
+              required
+            >
+            <small class="form-hint">We'll send order updates to this email</small>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-large btn-block">
+            Continue to Menu →
+          </button>
+        </form>
+        
+        <div id="message" class="message" style="display: none;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <span class="logo-small">☕</span>
+          <span>BeanBox Café</span>
+        </div>
+        <p class="footer-text">Crafting Perfect Moments, One Cup at a Time</p>
+        <p class="footer-copyright">© 2025 BeanBox Café. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/utils.js"></script>
+  <script>
+    // Check if orders are being accepted
+    async function checkOrdersStatus() {
+      try {
+        const settings = await apiCall('/settings');
+        
+        if (!settings.acceptingOrders) {
+          // Replace order form with message
+          const orderCard = document.querySelector('.order-card');
+          orderCard.innerHTML = `
+            <div class="orders-stopped-message">
+              <div class="icon">⏸️</div>
+              <h2>Orders Temporarily Paused</h2>
+              <p>We're not accepting new orders at the moment.</p>
+              <p>Please check back later or visit us in person!</p>
+              <p style="margin-top: 20px; font-weight: 600;">Thank you for your understanding.</p>
+            </div>
+          `;
+          
+          // Disable the hero CTA button
+          const ctaBtn = document.querySelector('.btn-cta');
+          ctaBtn.disabled = true;
+          ctaBtn.textContent = 'Orders Paused';
+        }
+      } catch (error) {
+        console.error('Error checking orders status:', error);
+      }
+    }
+    
+    // Smooth scroll to order section
+    function scrollToOrder() {
+      document.getElementById('order').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Handle form submission
+    document.getElementById('customerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+      const messageEl = document.getElementById('message');
+      
+      if (!name || !email) {
+        showMessage('Please fill in all fields', 'error');
+        return;
+      }
+      
+      // Validate email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showMessage('Please enter a valid email address', 'error');
+        return;
+      }
+      
+      // Check if orders are being accepted before proceeding
+      try {
+        const settings = await apiCall('/settings');
+        
+        if (!settings.acceptingOrders) {
+          showMessage('Sorry, we are not accepting orders at the moment', 'error');
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking settings:', error);
+      }
+      
+      // Store customer info in sessionStorage
+      const customerId = 'customer_' + Date.now();
+      sessionStorage.setItem('customerId', customerId);
+      sessionStorage.setItem('customerName', name);
+      sessionStorage.setItem('customerEmail', email);
+      
+      // Redirect to menu
+      window.location.href = 'menu.html';
+    });
+    
+    // Initialize
+    checkOrdersStatus();
+    
+    function showMessage(text, type) {
+      const messageEl = document.getElementById('message');
+      messageEl.textContent = text;
+      messageEl.className = `message ${type}`;
+      messageEl.style.display = 'block';
+      
+      setTimeout(() => {
+        messageEl.style.display = 'none';
+      }, 5000);
+    }
+ async function checkOrdersStatus() {
+  try {
+    const settings = await apiCall('/settings');
+    const ctaBtn = document.querySelector('.btn-cta'); // Your “Order Now” button
+    const orderForm = document.getElementById('customerForm'); // Your existing form
+    const orderCard = document.querySelector('.order-card'); // Parent container
+
+    if (!settings.acceptingOrders) {
+      // If orders are paused
+      if (!document.querySelector('.orders-stopped-message')) {
+        const pausedMsg = document.createElement('div');
+        pausedMsg.className = 'orders-stopped-message';
+        pausedMsg.innerHTML = `
+          <div class="icon">⏸️</div>
+          <h2>Orders Temporarily Paused</h2>
+          <p>We're not accepting new orders at the moment.</p>
+          <p>Please check back later or visit us in person!</p>
+          <p style="margin-top: 20px; font-weight: 600;">Thank you for your understanding.</p>
+        `;
+        orderCard.appendChild(pausedMsg);
+      }
+      orderForm.style.display = 'none';
+      if (ctaBtn) {
+        ctaBtn.textContent = 'Orders Paused';
+        ctaBtn.disabled = true;
+      }
+    } else {
+      // Orders open again
+      const pausedMsg = document.querySelector('.orders-stopped-message');
+      if (pausedMsg) pausedMsg.remove();
+      orderForm.style.display = 'block';
+      if (ctaBtn) {
+        ctaBtn.textContent = 'Order Now';
+        ctaBtn.disabled = false;
+      }
+    }
+  } catch (error) {
+    console.error('Error checking orders status:', error);
+  }
+}
+
+    // Add parallax effect to hero
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const heroContent = document.querySelector('.hero-content');
+      if (heroContent) {
+        heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+        heroContent.style.opacity = 1 - (scrolled / 500);
+      }
+    });
+
+    // Animate features on scroll
+    const observerOptions = {
+      threshold: 0.2,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.feature-card').forEach(card => {
+      observer.observe(card);
+    });
+    // Initialize
+checkOrdersStatus();
+
+// Auto refresh every 30 seconds
+setInterval(checkOrdersStatus, 3000); // 30,000 ms = 30 seconds
+
+  </script>
+</body>
+</html>

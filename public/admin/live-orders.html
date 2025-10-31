@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Orders - BeanBox Café Admin</title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>BeanBox Admin</h2>
+        <p class="admin-email" id="adminEmail"></p>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="analytics.html" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </a>
+        <a href="menu.html" class="nav-item">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Menu</span>
+        </a>
+        <a href="live-orders.html" class="nav-item active">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-text">Live Orders</span>
+        </a>
+        <a href="completed.html" class="nav-item">
+          <span class="nav-icon">✅</span>
+          <span class="nav-text">Completed</span>
+        </a>
+        <a href="walk-in.html" class="nav-item">
+          <span class="nav-icon">🚶</span>
+          <span class="nav-text">Walk-in Order</span>
+        </a>
+        <a href="#" class="nav-item nav-logout" onclick="handleLogout()">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-text">Logout</span>
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1>Live Orders</h1>
+        <div class="header-actions">
+          <button class="btn btn-primary btn-sm" onclick="loadOrders()">
+            🔄 Refresh
+          </button>
+          <span class="current-time" id="currentTime"></span>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <div class="orders-list" id="ordersList">
+          <div class="loading">Loading orders...</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/admin-common.js"></script>
+  <script>
+    let orders = [];
+    let previousOrderCount = 0;
+
+    async function loadOrders() {
+      try {
+        const allOrders = await apiCall('/orders');
+        orders = allOrders.filter(o => 
+          o.status === 'pending' || o.status === 'accepted'
+        );
+        
+        // Play sound if new orders
+        if (orders.length > previousOrderCount) {
+          playNotificationSound();
+        }
+        previousOrderCount = orders.length;
+        
+        displayOrders();
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        document.getElementById('ordersList').innerHTML = 
+          '<div class="empty-state">Failed to load orders</div>';
+      }
+    }
+
+    function displayOrders() {
+      const container = document.getElementById('ordersList');
+      
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size: 80px; margin-bottom: 20px;">✅</div>
+            <h3>All Caught Up!</h3>
+            <p>No pending orders at the moment</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = orders.map(order => `
+        <div class="order-card">
+          <div class="order-header">
+            <div>
+              <div class="order-id">Order #${order.orderId}</div>
+              <div class="order-time">${formatDate(order.createdAt)} • ${formatTime(order.createdAt)}</div>
+            </div>
+            <div>
+              <span class="payment-badge payment-${order.paymentType}">
+                ${order.paymentType === 'online' ? '💳 Online' : '💵 Cash'}
+              </span>
+            </div>
+          </div>
+          
+          <div class="order-body">
+            <div class="order-info">
+              <div class="order-label">Customer</div>
+              <div class="order-value">${order.customerName}</div>
+            </div>
+            
+            <div class="order-info">
+              <div class="order-label">Status</div>
+              <div class="order-value">
+                <span class="status-badge status-${order.status}">${order.status}</span>
+              </div>
+            </div>
+            
+            <div class="order-info">
+              <div class="order-label">Total</div>
+              <div class="order-value">₹${order.total}</div>
+            </div>
+            
+            <div class="order-info">
+              <div class="order-label">Pickup OTP</div>
+              <div class="order-otp">${order.pickupOTP}</div>
+            </div>
+          </div>
+          
+          <div class="order-items">
+            <div class="order-items-title">Items:</div>
+            ${order.items.map(item => `
+              <div class="order-item">
+                <span>${item.name} x${item.quantity}</span>
+                <span>₹${item.price * item.quantity}</span>
+              </div>
+            `).join('')}
+          </div>
+          
+          <div class="order-actions">
+            ${order.status === 'pending' ? `
+              <button class="btn btn-success btn-sm" onclick="acceptOrder('${order.id}')">
+                ✓ Accept Order
+              </button>
+            ` : ''}
+            ${order.status === 'accepted' ? `
+              <button class="btn btn-primary btn-sm" onclick="completeOrder('${order.id}')">
+                ✅ Mark Complete
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function acceptOrder(orderId) {
+      if (!confirm('Accept this order?')) return;
+      
+      try {
+        await apiCall(`/orders/${orderId}/status`, 'PUT', { status: 'accepted' });
+        showToast('Order accepted successfully', 'success');
+        await loadOrders();
+      } catch (error) {
+        console.error('Error accepting order:', error);
+        showToast('Failed to accept order', 'error');
+      }
+    }
+
+    async function completeOrder(orderId) {
+      if (!confirm('Mark this order as complete?')) return;
+      
+      try {
+        await apiCall(`/orders/${orderId}/status`, 'PUT', { status: 'completed' });
+        showToast('Order completed successfully', 'success');
+        await loadOrders();
+      } catch (error) {
+        console.error('Error completing order:', error);
+        showToast('Failed to complete order', 'error');
+      }
+    }
+
+    function showToast(message, type) {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 10);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize
+    loadOrders();
+    
+    // Auto-refresh every 10 seconds
+    setInterval(loadOrders, 10000);
+  </script>
+</body>
+</html>
