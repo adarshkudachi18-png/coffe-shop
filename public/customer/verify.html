@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify - BeanBox Café</title>
+  <link rel="stylesheet" href="../css/customer.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <button class="btn-back" onclick="history.back()">←</button>
+      <h2>Verification</h2>
+    </div>
+    
+    <div class="card">
+      <div class="logo-small">☕</div>
+      
+      <div id="phoneSection">
+        <h3>Enter Your Details</h3>
+        <p class="subtitle">We'll send you a verification code</p>
+        
+        <form id="phoneForm">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-input" placeholder="Enter your name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="form-input" placeholder="Enter 10 digit mobile number" required pattern="[0-9]{10}" maxlength="10">
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block" id="sendOtpBtn">
+            Send OTP
+          </button>
+        </form>
+      </div>
+      
+      <div id="otpSection" style="display: none;">
+        <h3>Enter OTP</h3>
+        <p class="subtitle">We've sent a 4-digit code to your email</p>
+        
+        <form id="otpForm">
+          <div class="otp-inputs">
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+            <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block" id="verifyOtpBtn">
+            Verify & Continue
+          </button>
+          
+          <button type="button" class="btn btn-text" onclick="resendOTP()">
+            Resend OTP
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <div id="message" class="message"></div>
+  </div>
+  
+  <script src="../js/utils.js"></script>
+  <script src="../js/customer-verify.js"></script>
+</body>
+</html>

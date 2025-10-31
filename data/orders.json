@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1",
+    "orderId": 1,
+    "userId": "user_1761890629995_1h1lj8z86",
+    "customerName": "Adarsh .k",
+    "customerEmail": "00adarsh.kudachi00@gmail.com",
+    "customerPhone": "7829606988",
+    "items": [
+      {
+        "id": "2",
+        "name": "Latte",
+        "price": 130,
+        "quantity": 1
+      }
+    ],
+    "total": 137,
+    "paymentType": "online",
+    "paymentId": "pay_RZyWfjRdQR2T99",
+    "pickupOTP": "5032",
+    "status": "completed",
+    "createdAt": "2025-10-31T06:06:53.626Z",
+    "updatedAt": "2025-10-31T06:07:37.409Z",
+    "acceptedAt": "2025-10-31T06:07:23.200Z",
+    "completedAt": "2025-10-31T06:07:37.409Z"
+  },
+  {
+    "id": "2",
+    "orderId": 2,
+    "userId": "walk-in",
+    "customerName": "adarsh",
+    "customerEmail": "",
+    "customerPhone": "",
+    "items": [
+      {
+        "id": "1",
+        "name": "Cappuccino",
+        "price": 120,
+        "quantity": 1
+      }
+    ],
+    "total": 120,
+    "paymentType": "cash",
+    "paymentId": "",
+    "pickupOTP": "2937",
+    "status": "completed",
+    "createdAt": "2025-10-31T06:08:14.669Z",
+    "updatedAt": "2025-10-31T06:08:29.598Z",
+    "acceptedAt": "2025-10-31T06:08:23.118Z",
+    "completedAt": "2025-10-31T06:08:29.599Z"
+  }
+]

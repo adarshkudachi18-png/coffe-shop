@@ -1,0 +1,21 @@
+[
+  {
+    "date": "2025-10-31",
+    "totalOrders": 2,
+    "totalRevenue": 257,
+    "onlineRevenue": 137,
+    "cashRevenue": 120,
+    "onlineOrders": 1,
+    "cashOrders": 1,
+    "topItems": {
+      "Latte": {
+        "count": 1,
+        "revenue": 130
+      },
+      "Cappuccino": {
+        "count": 1,
+        "revenue": 120
+      }
+    }
+  }
+]
