@@ -18,7 +18,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       padding: 20px;
     }
 
@@ -29,6 +29,7 @@
       padding: 60px 40px;
       border-radius: 20px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
     }
 
     .logo {
@@ -129,52 +130,57 @@
     /* Footer Section */
     footer {
       width: 100%;
-      background: rgba(255, 255, 255, 0.9);
-      margin-top: 40px;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
-      padding: 20px;
+      padding: 30px;
       text-align: center;
       box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     }
 
-    .footer-links {
-      margin-bottom: 10px;
-    }
-
-    .footer-links a {
+    footer h2 {
       color: #7B2CBF;
-      text-decoration: none;
-      font-weight: 500;
-      margin: 0 10px;
-      transition: color 0.3s;
+      margin-bottom: 20px;
     }
 
-    .footer-links a:hover {
-      color: #5A189A;
-      text-decoration: underline;
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      text-align: left;
     }
 
-    .contact-card {
+    .info-card {
       background: white;
       border: 1px solid #ddd;
       border-radius: 12px;
       padding: 15px;
-      display: inline-block;
-      margin-top: 10px;
       box-shadow: 0 5px 20px rgba(123, 44, 191, 0.15);
+      transition: transform 0.3s;
     }
 
-    .contact-card p {
-      margin: 5px 0;
+    .info-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .info-card h3 {
+      color: #7B2CBF;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .info-card p {
       color: #555;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
-    .contact-card strong {
+    .contact-card p strong {
       color: #7B2CBF;
     }
 
     .footer-bottom {
-      margin-top: 15px;
+      margin-top: 20px;
       font-size: 13px;
       color: #666;
     }
@@ -194,11 +200,6 @@
       }
       .btn {
         width: 100%;
-      }
-      .footer-links {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
       }
     }
   </style>
@@ -249,17 +250,35 @@
   </div>
 
   <footer>
-    <div class="footer-links">
-      <a href="/contact.html">Contact Us</a> |
-      <a href="/terms.html">Terms & Conditions</a> |
-      <a href="/refund.html">Cancellation & Refund Policy</a> |
-      <a href="/privacy.html">Privacy Policy</a> |
-      <a href="/about.html">About Us</a>
-    </div>
+    <h2>Information & Policies</h2>
 
-    <div class="contact-card">
-      <p><strong>📞 Phone:</strong> 7829606988</p>
-      <p><strong>📧 Email:</strong> 00adarsh.kudachi00@gmail.com</p>
+    <div class="info-cards">
+      <div class="info-card">
+        <h3>📞 Contact Us</h3>
+        <p><strong>Phone:</strong> 7829606988<br>
+        <strong>Email:</strong> 00adarsh.kudachi00@gmail.com<br>
+        Address: BeanBox Café, Campus Complex</p>
+      </div>
+
+      <div class="info-card">
+        <h3>📜 Terms & Conditions</h3>
+        <p>By using BeanBox Café’s ordering system, you agree to provide accurate information and follow café guidelines. Orders once placed are subject to café confirmation.</p>
+      </div>
+
+      <div class="info-card">
+        <h3>💰 Cancellation & Refund Policy</h3>
+        <p>Orders can be cancelled within 5 minutes of placing. Refunds (if applicable) will be processed to the original payment method within 3–5 business days.</p>
+      </div>
+
+      <div class="info-card">
+        <h3>🔒 Privacy Policy</h3>
+        <p>Your personal data is securely handled and never shared with third parties. Payment information is encrypted via Razorpay for maximum security.</p>
+      </div>
+
+      <div class="info-card">
+        <h3>☕ About Us</h3>
+        <p>BeanBox Café brings you a smart way to order, pay, and enjoy your coffee seamlessly. Designed for campus life — quick, simple, and secure!</p>
+      </div>
     </div>
 
     <div class="footer-bottom">
