@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - BeanBox Café Admin</title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>BeanBox Admin</h2>
+        <p class="admin-email" id="adminEmail"></p>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="analytics.html" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </a>
+        <a href="menu.html" class="nav-item">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Menu</span>
+        </a>
+        <a href="live-orders.html" class="nav-item">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-text">Live Orders</span>
+        </a>
+        <a href="completed.html" class="nav-item">
+          <span class="nav-icon">✅</span>
+          <span class="nav-text">Completed</span>
+        </a>
+        <a href="walk-in.html" class="nav-item">
+          <span class="nav-icon">🚶</span>
+          <span class="nav-text">Walk-in Order</span>
+        </a>
+        <a href="#" class="nav-item nav-logout" onclick="handleLogout()">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-text">Logout</span>
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1>Dashboard</h1>
+        <div class="header-actions">
+          <div class="order-toggle">
+            <label class="toggle-label">
+              <span>Accepting Orders</span>
+              <div class="toggle-switch">
+                <input type="checkbox" id="acceptingOrdersToggle" checked>
+                <span class="toggle-slider"></span>
+              </div>
+            </label>
+          </div>
+          <span class="current-time" id="currentTime"></span>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">📦</div>
+            <div class="kpi-content">
+              <div class="kpi-label">Total Orders Today</div>
+              <div class="kpi-value" id="kpi-total-orders">0</div>
+            </div>
+          </div>
+          
+          <div class="kpi-card">
+            <div class="kpi-icon">💰</div>
+            <div class="kpi-content">
+              <div class="kpi-label">Total Revenue</div>
+              <div class="kpi-value">₹<span id="kpi-total-revenue">0</span></div>
+            </div>
+          </div>
+          
+          <div class="kpi-card">
+            <div class="kpi-icon">🔔</div>
+            <div class="kpi-content">
+              <div class="kpi-label">Live Orders</div>
+              <div class="kpi-value" id="kpi-live">0</div>
+            </div>
+          </div>
+          
+          <div class="kpi-card">
+            <div class="kpi-icon">✅</div>
+            <div class="kpi-content">
+              <div class="kpi-label">Completed Today</div>
+              <div class="kpi-value" id="kpi-completed">0</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recent Orders -->
+        <div class="chart-container">
+          <h3>Recent Orders</h3>
+          <div id="recentOrders" class="recent-orders">
+            <div class="loading">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/admin-common.js"></script>
+  <script>
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Load settings
+        const settings = await apiCall('/settings');
+        document.getElementById('acceptingOrdersToggle').checked = settings.acceptingOrders;
+        
+        // Load today's analytics
+        const analytics = await apiCall('/analytics?period=today');
+        document.getElementById('kpi-total-orders').textContent = analytics.totalOrders;
+        document.getElementById('kpi-total-revenue').textContent = analytics.totalRevenue;
+        
+        // Load orders
+        const allOrders = await apiCall('/orders');
+        const liveOrders = allOrders.filter(o => o.status === 'pending' || o.status === 'accepted');
+        const completedToday = allOrders.filter(o => {
+          const today = new Date().toISOString().split('T')[0];
+          const orderDate = new Date(o.createdAt).toISOString().split('T')[0];
+          return o.status === 'completed' && orderDate === today;
+        });
+        
+        document.getElementById('kpi-live').textContent = liveOrders.length;
+        document.getElementById('kpi-completed').textContent = completedToday.length;
+        
+        // Display recent orders
+        displayRecentOrders(allOrders.slice(0, 10));
+      } catch (error) {
+        console.error('Error loading dashboard:', error);
+      }
+    }
+
+    function displayRecentOrders(orders) {
+      const container = document.getElementById('recentOrders');
+      
+      if (orders.length === 0) {
+        container.innerHTML = '<div class="empty-state">No recent orders</div>';
+        return;
+      }
+      
+      container.innerHTML = orders.map(order => `
+        <div class="recent-order-item">
+          <div>
+            <strong>Order #${order.orderId}</strong> - ${order.customerName}
+            <br>
+            <small>${formatDate(order.createdAt)}</small>
+          </div>
+          <div style="text-align: right;">
+            <strong>₹${order.total}</strong>
+            <br>
+            <span class="status-badge status-${order.status}">${order.status.toUpperCase()}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Toggle accepting orders
+    document.getElementById('acceptingOrdersToggle').addEventListener('change', async (e) => {
+      try {
+        await apiCall('/settings', 'PUT', {
+          acceptingOrders: e.target.checked
+        });
+        
+        const status = e.target.checked ? 'accepting' : 'stopped accepting';
+        showToast(`Now ${status} orders`, 'success');
+      } catch (error) {
+        console.error('Error updating settings:', error);
+        e.target.checked = !e.target.checked;
+        showToast('Failed to update settings', 'error');
+      }
+    });
+
+    function showToast(message, type) {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 10);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Initialize
+    loadDashboard();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadDashboard, 30000);
+  </script>
+</body>
+</html>

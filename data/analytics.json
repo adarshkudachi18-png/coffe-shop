@@ -1,0 +1,44 @@
+[
+  {
+    "date": "2025-10-31",
+    "totalOrders": 3,
+    "totalRevenue": 258,
+    "onlineRevenue": 138,
+    "cashRevenue": 120,
+    "onlineOrders": 2,
+    "cashOrders": 1,
+    "topItems": {
+      "Latte": {
+        "count": 1,
+        "revenue": 130
+      },
+      "Cappuccino": {
+        "count": 1,
+        "revenue": 120
+      },
+      "burger": {
+        "count": 1,
+        "revenue": 1
+      }
+    }
+  },
+  {
+    "date": "2025-11-01",
+    "totalOrders": 5,
+    "totalRevenue": 5,
+    "onlineRevenue": 1,
+    "cashRevenue": 4,
+    "onlineOrders": 1,
+    "cashOrders": 4,
+    "topItems": {
+      "123": {
+        "count": 3,
+        "revenue": 3
+      },
+      "burger": {
+        "count": 2,
+        "revenue": 2
+      }
+    }
+  }
+]

@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Walk-in Order - BeanBox Café Admin</title>
+  <link rel="stylesheet" href="../css/admin.css">
+  <style>
+    /* Professional Walk-in UI */
+    .walkin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .walkin-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 30px;
+      align-items: start;
+    }
+
+    .menu-section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      color: var(--primary);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 16px 50px 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(123, 44, 191, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+      color: var(--text-light);
+    }
+
+    .category-filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .filter-chip {
+      padding: 10px 20px;
+      border: 2px solid var(--border);
+      background: white;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .filter-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .menu-items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      max-height: calc(100vh - 450px);
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .menu-card {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .menu-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(123, 44, 191, 0.2);
+    }
+
+    .menu-card.selected {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      color: white;
+      box-shadow: 0 4px 16px rgba(123, 44, 191, 0.4);
+    }
+
+    .menu-card-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .menu-card.selected .menu-card-name,
+    .menu-card.selected .menu-card-price,
+    .menu-card.selected .menu-card-category {
+      color: white;
+    }
+
+    .menu-card-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .menu-card-category {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 12px;
+    }
+
+    .menu-card-qty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      margin-top: 10px;
+    }
+
+    .menu-card-qty button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .menu-card-qty button:hover {
+      transform: scale(1.15);
+    }
+
+    .menu-card-qty span {
+      font-weight: 800;
+      color: var(--primary);
+      min-width: 25px;
+    }
+
+    .cart-sidebar {
+      position: sticky;
+      top: 100px;
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: 3px solid var(--primary);
+    }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid var(--primary);
+    }
+
+    .cart-title {
+      font-size: 20px;
+      color: var(--primary);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .customer-info-section {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+      border-radius: 16px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .info-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-field {
+      margin-bottom: 15px;
+    }
+
+    .form-field:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .form-field input,
+    .form-field select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(123, 44, 191, 0.1);
+    }
+
+    .cart-items-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .cart-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .cart-empty-icon {
+      font-size: 60px;
+      margin-bottom: 15px;
+      opacity: 0.3;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 2px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .cart-item:hover {
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cart-item-total {
+      font-weight: 800;
+      color: var(--primary);
+      font-size: 16px;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      padding: 4px 8px;
+      border-radius: 50px;
+    }
+
+    .cart-item-controls button {
+      background: white;
+      color: var(--primary);
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .cart-item-controls button:hover {
+      transform: scale(1.2);
+    }
+
+    .cart-item-controls span {
+      color: white;
+      font-weight: 700;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .btn-remove {
+      background: var(--danger) !important;
+      color: white !important;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-remove:hover {
+      transform: scale(1.15);
+    }
+
+    .cart-total-section {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    .total-label {
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .total-amount {
+      color: white;
+      font-size: 32px;
+      font-weight: 900;
+    }
+
+    .btn-place-order {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--success), #388E3C);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 16px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-place-order:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(76, 175, 80, 0.5);
+    }
+
+    .btn-place-order:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Toast Container */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toast {
+      background: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 320px;
+      max-width: 500px;
+      animation: slideIn 0.3s ease-out;
+      border-left: 4px solid;
+    }
+
+    .toast.success {
+      border-left-color: var(--success);
+    }
+
+    .toast.error {
+      border-left-color: var(--danger);
+    }
+
+    .toast.info {
+      border-left-color: var(--primary);
+    }
+
+    .toast-icon {
+      font-size: 24px;
+    }
+
+    .toast-message {
+      flex: 1;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .walkin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cart-sidebar {
+        position: relative;
+        top: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .menu-items-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 12px;
+      }
+
+      .toast-container {
+        left: 10px;
+        right: 10px;
+      }
+
+      .toast {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">☕</div>
+        <h2>BeanBox Admin</h2>
+        <p class="admin-email" id="adminEmail"></p>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="analytics.html" class="nav-item">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </a>
+        <a href="menu.html" class="nav-item">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Menu</span>
+        </a>
+        <a href="live-orders.html" class="nav-item">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-text">Live Orders</span>
+        </a>
+        <a href="completed.html" class="nav-item">
+          <span class="nav-icon">✅</span>
+          <span class="nav-text">Completed</span>
+        </a>
+        <a href="walk-in.html" class="nav-item active">
+          <span class="nav-icon">🚶</span>
+          <span class="nav-text">Walk-in Order</span>
+        </a>
+        <a href="#" class="nav-item nav-logout" onclick="handleLogout()">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-text">Logout</span>
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-header">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <h1>🚶 Walk-in Order</h1>
+        <div class="header-actions">
+          <span class="current-time" id="currentTime"></span>
+        </div>
+      </header>
+      
+      <div class="content-area">
+        <div class="walkin-container">
+          <div class="walkin-grid">
+            <!-- Menu Section -->
+            <div class="menu-section">
+              <div class="section-header">
+                <h2 class="section-title">
+                  <span>📋</span>
+                  <span>Menu Items</span>
+                </h2>
+              </div>
+
+              <div class="search-box">
+                <input 
+                  type="text" 
+                  id="menuSearch" 
+                  placeholder="Search items..."
+                  oninput="filterMenuItems()"
+                >
+                <span class="search-icon">🔍</span>
+              </div>
+
+              <div class="category-filters">
+                <button class="filter-chip active" data-category="all" onclick="filterCategory('all')">All</button>
+                <button class="filter-chip" data-category="Coffee" onclick="filterCategory('Coffee')">☕ Coffee</button>
+                <button class="filter-chip" data-category="Snacks" onclick="filterCategory('Snacks')">🍪 Snacks</button>
+                <button class="filter-chip" data-category="Desserts" onclick="filterCategory('Desserts')">🍰 Desserts</button>
+                <button class="filter-chip" data-category="Drinks" onclick="filterCategory('Drinks')">🥤 Drinks</button>
+              </div>
+
+              <div id="menuGrid" class="menu-items-grid">
+                <div class="loading">Loading menu...</div>
+              </div>
+            </div>
+
+            <!-- Cart Sidebar -->
+            <div class="cart-sidebar">
+              <div class="cart-header">
+                <h3 class="cart-title">
+                  <span>🛒</span>
+                  <span>Order Cart</span>
+                </h3>
+              </div>
+
+              <div class="customer-info-section">
+                <div class="info-title">Customer Info</div>
+                <div class="form-field">
+                  <label>Name *</label>
+                  <input type="text" id="customerName" placeholder="Enter name" required>
+                </div>
+                <div class="form-field">
+                  <label>Email (Optional)</label>
+                  <input type="email" id="customerEmail" placeholder="customer@example.com">
+                </div>
+                <div class="form-field">
+                  <label>Payment *</label>
+                  <select id="paymentType">
+                    <option value="cash">💵 Cash Payment</option>
+                    <option value="online">💳 Online Payment</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="cart-items-list" id="cartItemsList">
+                <div class="cart-empty">
+                  <div class="cart-empty-icon">🛒</div>
+                  <p>No items added yet</p>
+                </div>
+              </div>
+
+              <div id="cartTotalSection" style="display: none;">
+                <div class="cart-total-section">
+                  <div class="total-label">Total Amount</div>
+                  <div class="total-amount">₹<span id="totalAmount">0</span></div>
+                </div>
+
+                <button class="btn-place-order" onclick="placeOrder()">
+                  <span>🛒 Place Order</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/utils.js"></script>
+  <script src="../js/admin-common.js"></script>
+  <script>
+    let menuItems = [];
+    let cart = {};
+    let currentCategory = 'all';
+
+    // Toast Notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      
+      const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️'
+      };
+      
+      toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || icons.info}</div>
+        <div class="toast-message">${message}</div>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease-out forwards';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Load menu
+    async function loadMenu() {
+      try {
+        menuItems = await apiCall('/menu');
+        displayMenu();
+      } catch (error) {
+        console.error('Error loading menu:', error);
+        document.getElementById('menuGrid').innerHTML = 
+          '<div class="empty-state">Failed to load menu</div>';
+        showToast('Failed to load menu', 'error');
+      }
+    }
+
+    // Display menu items
+    function displayMenu() {
+      const container = document.getElementById('menuGrid');
+      const searchTerm = document.getElementById('menuSearch').value.toLowerCase();
+      
+      let filtered = menuItems.filter(item => item.inStock);
+      
+      // Filter by category
+      if (currentCategory !== 'all') {
+        filtered = filtered.filter(item => item.category === currentCategory);
+      }
+      
+      // Filter by search
+      if (searchTerm) {
+        filtered = filtered.filter(item => 
+          item.name.toLowerCase().includes(searchTerm) ||
+          item.category.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state">No items found</div>';
+        return;
+      }
+      
+      container.innerHTML = filtered.map(item => `
+        <div class="menu-card ${cart[item.id] ? 'selected' : ''}" onclick="toggleItem('${item.id}')">
+          <div class="menu-card-name">${item.name}</div>
+          <div class="menu-card-price">₹${item.price}</div>
+          <div class="menu-card-category">${item.category}</div>
+          ${cart[item.id] ? `
+            <div class="menu-card-qty" onclick="event.stopPropagation()">
+              <button onclick="updateQuantity('${item.id}', -1)">−</button>
+              <span>${cart[item.id]}</span>
+              <button onclick="updateQuantity('${item.id}', 1)">+</button>
+            </div>
+          ` : `
+            <div style="color: ${cart[item.id] ? 'white' : 'var(--primary)'}; font-weight: 600; font-size: 13px;">
+              Click to Add
+            </div>
+          `}
+        </div>
+      `).join('');
+    }
+
+    // Toggle item in cart
+    function toggleItem(itemId) {
+      if (cart[itemId]) {
+        delete cart[itemId];
+        showToast('Item removed', 'info');
+      } else {
+        cart[itemId] = 1;
+        showToast('Item added to cart', 'success');
+      }
+      displayMenu();
+      updateCart();
+    }
+
+    // Update quantity
+    function updateQuantity(itemId, change) {
+      if (cart[itemId]) {
+        cart[itemId] += change;
+        
+        if (cart[itemId] <= 0) {
+          delete cart[itemId];
+          showToast('Item removed', 'info');
+        } else {
+          showToast(change > 0 ? 'Quantity increased' : 'Quantity decreased', 'success');
+        }
+      }
+      
+      displayMenu();
+      updateCart();
+    }
+
+    // Update cart display
+    function updateCart() {
+      const cartItemsList = document.getElementById('cartItemsList');
+      const cartTotalSection = document.getElementById('cartTotalSection');
+      const totalAmount = document.getElementById('totalAmount');
+      
+      const cartKeys = Object.keys(cart);
+      
+      if (cartKeys.length === 0) {
+        cartItemsList.innerHTML = `
+          <div class="cart-empty">
+            <div class="cart-empty-icon">🛒</div>
+            <p>No items added yet</p>
+          </div>
+        `;
+        cartTotalSection.style.display = 'none';
+        return;
+      }
+      
+      cartTotalSection.style.display = 'block';
+      
+      let total = 0;
+      const itemsHTML = cartKeys.map(itemId => {
+        const item = menuItems.find(m => m.id === itemId);
+        const itemTotal = item.price * cart[itemId];
+        total += itemTotal;
+        
+        return `
+          <div class="cart-item">
+            <div class="cart-item-details">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-price">₹${item.price} × ${cart[itemId]}</div>
+            </div>
+            <div class="cart-item-actions">
+              <div class="cart-item-total">₹${itemTotal}</div>
+              <div class="cart-item-controls">
+                <button onclick="updateQuantity('${itemId}', -1)">−</button>
+                <span>${cart[itemId]}</span>
+                <button onclick="updateQuantity('${itemId}', 1)">+</button>
+              </div>
+              <button class="btn-remove" onclick="removeItem('${itemId}')">×</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      cartItemsList.innerHTML = itemsHTML;
+      totalAmount.textContent = total;
+    }
+
+    // Remove item
+    function removeItem(itemId) {
+      delete cart[itemId];
+      displayMenu();
+      updateCart();
+      showToast('Item removed from cart', 'info');
+    }
+
+    // Filter by category
+    function filterCategory(category) {
+      currentCategory = category;
+      
+      // Update active button
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.category === category) {
+          btn.classList.add('active');
+        }
+      });
+      
+      displayMenu();
+    }
+
+    // Filter menu items by search
+    function filterMenuItems() {
+      displayMenu();
+    }
+
+    // Place order
+    async function placeOrder() {
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const paymentType = document.getElementById('paymentType').value;
+      
+      if (!customerName) {
+        showToast('Please enter customer name', 'error');
+        document.getElementById('customerName').focus();
+        return;
+      }
+      
+      if (Object.keys(cart).length === 0) {
+        showToast('Please add items to cart', 'error');
+        return;
+      }
+      
+      // Prepare order data
+      const items = Object.keys(cart).map(itemId => {
+        const item = menuItems.find(m => m.id === itemId);
+        return {
+          id: itemId,
+          name: item.name,
+          price: item.price,
+          quantity: cart[itemId]
+        };
+      });
+      
+      const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      
+      const orderData = {
+        customerName,
+        customerEmail: customerEmail || 'walkin@beanbox.com',
+        items,
+        total,
+        paymentType,
+        orderType: 'walk-in'
+      };
+      
+      try {
+        showToast('Creating order...', 'info');
+        const order = await apiCall('/orders/walk-in', 'POST', orderData);
+        
+        showToast('Order placed successfully!', 'success');
+        
+        // Show success message with details
+        setTimeout(() => {
+          showToast(`Order #${order.orderId} created. Pickup OTP: ${order.pickupOTP}`, 'success');
+        }, 1000);
+        
+        // Reset form
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerEmail').value = '';
+        document.getElementById('paymentType').value = 'cash';
+        cart = {};
+        displayMenu();
+        updateCart();
+        
+      } catch (error) {
+        console.error('Error placing order:', error);
+        showToast('Failed to place order: ' + (error.message || 'Unknown error'), 'error');
+      }
+    }
+
+    // Initialize
+    loadMenu();
+  </script>
+</body>
+</html>

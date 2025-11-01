@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - BeanBox Café</title>
+  <link rel="stylesheet" href="../css/customer.css">
+  <style>
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 300px;
+      max-width: 500px;
+      pointer-events: all;
+      animation: slideIn 0.3s ease-out;
+      border-left: 4px solid;
+    }
+
+    .toast.success {
+      border-left-color: var(--success);
+    }
+
+    .toast.error {
+      border-left-color: var(--danger);
+    }
+
+    .toast.info {
+      border-left-color: var(--primary);
+    }
+
+    .toast-icon {
+      font-size: 24px;
+    }
+
+    .toast-message {
+      flex: 1;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .toast {
+        min-width: auto;
+        max-width: 90vw;
+      }
+
+      .toast-container {
+        right: 10px;
+        left: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toast-container" id="toastContainer"></div>
+  <div class="container">
+    <div class="header">
+      <div class="header-content">
+        <div class="logo-small">☕</div>
+        <div>
+          <h2>BeanBox Café</h2>
+          <p class="welcome-text">Welcome, <span id="userName"></span>!</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="category-filter">
+      <button class="category-btn active" data-category="all">All</button>
+      <button class="category-btn" data-category="Coffee">Coffee</button>
+      <button class="category-btn" data-category="Snacks">Snacks</button>
+      <button class="category-btn" data-category="Desserts">Desserts</button>
+      <button class="category-btn" data-category="Drinks">Drinks</button>
+    </div>
+    
+    <div id="menuGrid" class="menu-grid">
+      <div class="loading">Loading menu...</div>
+    </div>
+  </div>
+  
+  <div class="cart-float" id="cartFloat" onclick="location.href='cart.html'">
+    <span class="cart-icon">🛒</span>
+    <span class="cart-count" id="cartCount">0</span>
+    <span class="cart-total">₹<span id="cartTotal">0</span></span>
+  </div>
+  
+  <script src="../js/utils.js"></script>
+  <script src="../js/customer-menu.js"></script>
+</body>
+</html>
